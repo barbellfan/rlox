@@ -6,7 +6,6 @@ use std::io;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    dbg!(&args);
     if args.len() > 2 {
         println!("Usage: jlox [script]");
         process::exit(64);
@@ -24,7 +23,6 @@ fn run_file(path: &String) -> Result<(), std::io::Error> {
 }
 
 fn run_prompt() {
-    println!("running prompt");
     let mut line = String::new();
     
     'outer: loop {
