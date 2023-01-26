@@ -1,9 +1,13 @@
 use std::env;
-use std::io::Write;
-use std::process;
 use std::fs;
 use std::io;
-use std::str;
+use std::io::Write;
+use std::process;
+
+use scanner::Scanner;
+
+mod scanner;
+mod lox_token;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -45,12 +49,13 @@ fn run_prompt() {
 }
 
 fn run(bytes: Vec<u8>) -> Result<(), std::io::Error> {
-    let x = match str::from_utf8(&bytes) {
-        Ok(v) => v,
-        Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
+    let scan = scanner::Scanner {
+        source: bytes
     };
 
-    println!("{}", x);
+    let tokens = Scanner::scan_tokens(scan);
+
+    tokens.iter().for_each(|f| println!("{}", f.lexeme));
 
     Ok(())
 }
