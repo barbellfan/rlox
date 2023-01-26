@@ -3,6 +3,7 @@ use std::io::Write;
 use std::process;
 use std::fs;
 use std::io;
+use std::str;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -25,26 +26,31 @@ fn run_file(path: &String) -> Result<(), std::io::Error> {
 fn run_prompt() {
     let mut line = String::new();
     
-    'outer: loop {
+    loop {
         line.clear();
         print!("> ");
         io::stdout().flush().unwrap();
         match io::stdin().read_line(&mut line) {
             Ok(_) => {
                 if line == "\n" {
-                    break 'outer;
+                    break;
                 }
                 run(line.bytes().collect()).unwrap();
             },
             Err(_) => {
-                break 'outer;
+                break;
             }
         }
     }
 }
 
 fn run(bytes: Vec<u8>) -> Result<(), std::io::Error> {
-    dbg!("{}", bytes);
+    let x = match str::from_utf8(&bytes) {
+        Ok(v) => v,
+        Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
+    };
+
+    println!("{}", x);
 
     Ok(())
 }
