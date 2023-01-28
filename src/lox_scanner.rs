@@ -6,6 +6,7 @@ pub struct Scanner {
     pub source: Vec<u8>
 }
 
+#[derive(Debug, Clone)]
 pub struct LoxError {
     line: i64,
     error_type: String,
@@ -13,7 +14,7 @@ pub struct LoxError {
 }
 
 impl LoxError {
-    pub fn report_error(self) {
+    pub fn report_error(&self) {
         println!("[line {}] Error: {} : {}", self.line, self.error_type, self.error_message);
     }
 }

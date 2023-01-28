@@ -6,6 +6,7 @@ use std::path::Path;
 use std::process;
 
 mod lox_scanner;
+use lox_scanner::{Scanner, LoxError};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -19,7 +20,7 @@ fn main() {
     }
 }
 
-fn run_file(path: &Path) -> Result<(), std::io::Error> {
+fn run_file(path: &Path) -> Result<(), LoxError> {
     let bytes = fs::read(path).unwrap();
     run(bytes)
 }
@@ -39,24 +40,25 @@ fn run_prompt() {
                 run(line.bytes().collect()).unwrap();
             },
             Err(_) => {
-                break;
+                continue;
             }
         }
     }
 }
 
-fn run(bytes: Vec<u8>) -> Result<(), std::io::Error> {
+fn run(bytes: Vec<u8>) -> Result<(), LoxError> {
     let scan = lox_scanner::Scanner {
         source: bytes
     };
 
-    let result = lox_scanner::Scanner::scan_tokens(scan);
+    let result = Scanner::scan_tokens(scan);
     match result {
         Ok(tokens) => {
             tokens.iter().for_each(|f| print!("{}", f.lexeme));
         },
         Err(lox_error) => {
             lox_error.report_error();
+            return Err(lox_error)
         }
     }
 
