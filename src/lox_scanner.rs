@@ -1,6 +1,8 @@
-use crate::lox_token::lox_token::Token;
+pub struct Token {
+    pub lexeme: String
+}
 
-pub(crate) struct Scanner {
+pub struct Scanner {
     pub source: Vec<u8>
 }
 
