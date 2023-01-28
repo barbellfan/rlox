@@ -2,6 +2,7 @@ use std::env;
 use std::fs;
 use std::io;
 use std::io::Write;
+use std::path::Path;
 use std::process;
 
 use scanner::Scanner;
@@ -15,14 +16,13 @@ fn main() {
         println!("Usage: jlox [script]");
         process::exit(64);
     } else if args.len() == 2 {
-        let path = &args[1];
-        run_file(path).unwrap();
+        run_file(Path::new(&args[1])).unwrap();
     } else {
         run_prompt();
     }
 }
 
-fn run_file(path: &String) -> Result<(), std::io::Error> {
+fn run_file(path: &Path) -> Result<(), std::io::Error> {
     let bytes = fs::read(path).unwrap();
     run(bytes)
 }
