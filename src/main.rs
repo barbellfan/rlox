@@ -5,8 +5,6 @@ use std::io::Write;
 use std::path::Path;
 use std::process;
 
-use crate::lox_scanner::Scanner;
-
 mod lox_scanner;
 
 fn main() {
@@ -48,13 +46,19 @@ fn run_prompt() {
 }
 
 fn run(bytes: Vec<u8>) -> Result<(), std::io::Error> {
-    let scan = Scanner {
+    let scan = lox_scanner::Scanner {
         source: bytes
     };
 
-    let tokens = Scanner::scan_tokens(scan);
-
-    tokens.iter().for_each(|f| print!("{}", f.lexeme));
+    let result = lox_scanner::Scanner::scan_tokens(scan);
+    match result {
+        Ok(tokens) => {
+            tokens.iter().for_each(|f| print!("{}", f.lexeme));
+        },
+        Err(lox_error) => {
+            lox_error.report_error();
+        }
+    }
 
     Ok(())
 }

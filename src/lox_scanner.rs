@@ -6,8 +6,20 @@ pub struct Scanner {
     pub source: Vec<u8>
 }
 
+pub struct LoxError {
+    line: i64,
+    error_type: String,
+    error_message: String
+}
+
+impl LoxError {
+    pub fn report_error(self) {
+        println!("[line {}] Error: {} : {}", self.line, self.error_type, self.error_message);
+    }
+}
+
 impl Scanner {
-    pub fn scan_tokens(scanner: Scanner) -> Vec<Token> {
+    pub fn scan_tokens(scanner: Scanner) -> Result<Vec<Token>, LoxError> {
         // temporary code just to show that the function can read the scanner struct.
         let mut all_the_tokens: Vec<Token> = Vec::new();
         scanner.source.iter().for_each(|f| {
@@ -21,6 +33,6 @@ impl Scanner {
             all_the_tokens.push(token);
         });
 
-        all_the_tokens
+        Ok(all_the_tokens)
     }
 }
