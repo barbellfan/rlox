@@ -54,7 +54,7 @@ fn run(bytes: Vec<u8>) -> Result<(), LoxError> {
     let result = Scanner::scan_tokens(scan);
     match result {
         Ok(tokens) => {
-            tokens.iter().for_each(|f| print!("{}", f.lexeme));
+            tokens.iter().for_each(|f| print!("{}", f));
         },
         Err(lox_error) => {
             lox_error.report_error();
