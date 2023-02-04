@@ -76,7 +76,8 @@ pub enum TokenType {
 }
 
 pub struct Scanner {
-    pub source: Vec<u8>
+    pub source: Vec<u8>,
+    tokens: Vec<Token>
 }
 
 #[derive(Debug, Clone)]
@@ -93,6 +94,13 @@ impl LoxError {
 }
 
 impl Scanner {
+    pub fn new(bytes: Vec<u8>) -> Self {
+        Scanner {
+            source: bytes,
+            tokens: vec!()
+        }
+    }
+
     pub fn scan_tokens(scanner: Scanner) -> Result<Vec<Token>, LoxError> {
         // temporary code just to show that the function can read the scanner struct.
         let mut all_the_tokens: Vec<Token> = Vec::new();
