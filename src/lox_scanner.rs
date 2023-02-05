@@ -8,12 +8,12 @@ pub struct Token {
 }
 
 impl Token {
-    fn new(lexeme: String) -> Token {
+    fn new(token_type: TokenType, lexeme: String, literal: String, line: i32) -> Token {
         Token {
-            token_type: TokenType::EOF,
-            lexeme: lexeme,
-            literal: "".to_owned(),
-            line: 0
+            token_type,
+            lexeme,
+            literal,
+            line
         }
     }
 }
@@ -25,6 +25,8 @@ impl fmt::Display for Token {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)] // temp. ignore dead code until these get used.
+#[allow(non_camel_case_types)] // allow non-camel-case typs for tokens.
 pub enum TokenType {
     // Single-character tokens.
     LEFT_PAREN,
@@ -77,7 +79,10 @@ pub enum TokenType {
 
 pub struct Scanner {
     pub source: Vec<u8>,
-    tokens: Vec<Token>
+    tokens: Vec<Token>,
+    start: usize,
+    current: usize,
+    line: usize
 }
 
 #[derive(Debug, Clone)]
@@ -97,22 +102,29 @@ impl Scanner {
     pub fn new(bytes: Vec<u8>) -> Self {
         Scanner {
             source: bytes,
-            tokens: vec!()
+            tokens: vec!(),
+            start: 0,
+            current: 0,
+            line: 1
         }
     }
+}
 
-    pub fn scan_tokens(scanner: Scanner) -> Result<Vec<Token>, LoxError> {
-        // temporary code just to show that the function can read the scanner struct.
-        let mut all_the_tokens: Vec<Token> = Vec::new();
-        scanner.source.iter().for_each(|f| {
-            let a_byte = *f;
-
-            let a_string = String::from_utf8(vec!(a_byte)).unwrap();
-
-            let token: Token = Token::new(a_string);
-            all_the_tokens.push(token);
-        });
-
-        Ok(all_the_tokens)
+pub fn scan_tokens(mut scanner: Scanner) -> Result<Vec<Token>, LoxError> {
+    while !is_at_end(&scanner) {
+        scanner.start = scanner.current;
+        scan_token(&scanner);
     }
+
+    scanner.tokens.push(Token::new(TokenType::EOF, String::new(), String::new(), 0));
+
+    Ok(scanner.tokens)
+}
+
+fn is_at_end(scanner: &Scanner) -> bool {
+    scanner.current >= scanner.source.len()
+}
+
+fn scan_token(_scanner: &Scanner) {
+    // do something
 }
