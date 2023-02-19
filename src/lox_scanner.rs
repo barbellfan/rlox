@@ -53,4 +53,34 @@ fn is_at_end(scanner: &Scanner) -> bool {
 
 fn scan_token(scanner: &mut Scanner) {
     scanner.current += 1;
+    let c = advance(scanner);
+    match c {
+        '(' => add_token(scanner, TokenType::LEFT_PAREN, c),
+        ')' => add_token(scanner, TokenType::RIGHT_PAREN, c),
+        '{' => add_token(scanner, TokenType::LEFT_BRACE, c),
+        '}' => add_token(scanner, TokenType::RIGHT_BRACE, c),
+        ',' => add_token(scanner, TokenType::COMMA, c),
+        '.' => add_token(scanner, TokenType::DOT, c),
+        '-' => add_token(scanner, TokenType::MINUS, c),
+        '+' => add_token(scanner, TokenType::PLUS, c),
+        ';' => add_token(scanner, TokenType::SEMICOLON, c),
+        '*' => add_token(scanner, TokenType::STAR, c),
+        other => println!("other token: {}", other)
+    }
+}
+
+fn advance(scanner: &mut Scanner) -> char {
+    let c: char = scanner.source[scanner.current] as char;
+    scanner.current += 1;
+    c
+}
+
+fn add_token(scanner: &mut Scanner, token_type: TokenType, token: char) {
+    let text = match std::str::from_utf8(&scanner.source[scanner.start .. scanner.current]){
+        Ok(s) => s.to_owned(),
+        Err(e) => panic!("Error at line {}: {}", scanner.line, e),
+    };
+
+    let t: Token = Token::new(token_type, text.to_owned(), token.into(), 0);
+    scanner.tokens.push(t);
 }
