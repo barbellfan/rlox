@@ -47,7 +47,7 @@ fn run_prompt() {
 }
 
 fn run(bytes: Vec<u8>) -> Result<(), LoxError> {
-    let mut scanner = lox_scanner::Scanner::new(bytes);
+    let scanner = lox_scanner::Scanner::new(bytes);
 
     let result = lox_scanner::scan_tokens(scanner);
     match result {

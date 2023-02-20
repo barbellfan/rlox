@@ -4,11 +4,11 @@ pub struct Token {
     pub token_type: TokenType,
     pub lexeme: String,
     pub literal: String,
-    pub line: i32
+    pub line: u32
 }
 
 impl Token {
-    pub fn new(token_type: TokenType, lexeme: String, literal: String, line: i32) -> Token {
+    pub fn new(token_type: TokenType, lexeme: String, literal: String, line: u32) -> Token {
         Token {
             token_type,
             lexeme,
@@ -22,10 +22,10 @@ impl fmt::Display for Token {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f, 
-            "Lexeme: {}\nTokenType: {:?}\nLiteral: {}\nLine: {}\n", 
+            "Literal: {}\tLexeme: {}\tTokenType: {:?}\tLine: {}\n", 
+            self.literal,
             self.lexeme,
             self.token_type,
-            self.literal,
             self.line)
     }
 }

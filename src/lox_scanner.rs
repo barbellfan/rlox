@@ -4,11 +4,11 @@ mod token;
 use token::{Token, TokenType};
 
 pub struct Scanner {
-    pub source: Vec<u8>,
+    pub source: Vec<u8>, // Characters in file or typed in. Read as a u8 so it can be converted to char.
     tokens: Vec<Token>,
-    start: usize,
-    current: usize,
-    line: usize
+    start: usize, // Location in array. Use usize to match array index data type.
+    current: usize, // ditto
+    line: u32 // Line number. Use u32 since there can be lots of lines in a file.
 }
 
 #[derive(Debug, Clone)]
@@ -52,7 +52,6 @@ fn is_at_end(scanner: &Scanner) -> bool {
 }
 
 fn scan_token(scanner: &mut Scanner) {
-    scanner.current += 1;
     let c = advance(scanner);
     match c {
         '(' => add_token(scanner, TokenType::LEFT_PAREN, c),
@@ -65,7 +64,7 @@ fn scan_token(scanner: &mut Scanner) {
         '+' => add_token(scanner, TokenType::PLUS, c),
         ';' => add_token(scanner, TokenType::SEMICOLON, c),
         '*' => add_token(scanner, TokenType::STAR, c),
-        other => println!("other token: {}", other)
+        other => add_token(scanner, TokenType::STRING, other)
     }
 }
 
@@ -81,6 +80,6 @@ fn add_token(scanner: &mut Scanner, token_type: TokenType, token: char) {
         Err(e) => panic!("Error at line {}: {}", scanner.line, e),
     };
 
-    let t: Token = Token::new(token_type, text.to_owned(), token.into(), 0);
+    let t: Token = Token::new(token_type, text.to_owned(), token.into(), scanner.line);
     scanner.tokens.push(t);
 }
