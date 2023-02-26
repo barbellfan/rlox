@@ -118,3 +118,22 @@ fn add_token(scanner: &mut Scanner, token_type: TokenType, token: String) {
     let t: Token = Token::new(token_type, text.to_owned(), token.into(), scanner.line);
     scanner.tokens.push(t);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn scan_token_left_paren() {
+        let mut bytes = Vec::new();
+        bytes.push('(' as u8);
+        let scanner = &mut Scanner::new(bytes);
+        scan_token(scanner);
+        assert!(scanner.tokens.len() == 1);
+        let t = &scanner.tokens[0];
+        assert_eq!(t.token_type, TokenType::LEFT_PAREN);
+        assert_eq!(t.lexeme, "(");
+        assert_eq!(t.literal, "(");
+        assert_eq!(t.line, 1);
+    }
+}

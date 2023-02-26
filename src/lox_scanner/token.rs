@@ -30,7 +30,7 @@ impl fmt::Display for Token {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 #[allow(dead_code)] // temp. ignore dead code until these get used.
 #[allow(non_camel_case_types)] // allow non-camel-case typs for tokens.
 pub enum TokenType {
