@@ -1,5 +1,6 @@
 use std::fmt;
 
+#[derive(Debug)]
 pub struct Token {
     pub token_type: TokenType,
     pub lexeme: String,
@@ -27,6 +28,17 @@ impl fmt::Display for Token {
             self.lexeme,
             self.token_type,
             self.line)
+    }
+}
+
+/// Implement PartialEQ for Token.
+/// Use custom impl: don't use the line field for comparison.
+/// Tokens can be equal even if the line is different.
+impl PartialEq for Token {
+    fn eq(&self, other: &Self) -> bool {
+        self.token_type == other.token_type 
+        && self.lexeme == other.lexeme && 
+        self.literal == other.literal 
     }
 }
 

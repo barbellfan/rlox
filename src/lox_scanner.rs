@@ -130,10 +130,14 @@ mod tests {
         let scanner = &mut Scanner::new(bytes);
         scan_token(scanner);
         assert!(scanner.tokens.len() == 1);
+        let test_token = Token::new(
+            TokenType::LEFT_PAREN,
+            "(".to_owned(),
+            "(".to_owned(),
+            5);
+
         let t = &scanner.tokens[0];
-        assert_eq!(t.token_type, TokenType::LEFT_PAREN);
-        assert_eq!(t.lexeme, "(");
-        assert_eq!(t.literal, "(");
+        assert_eq!(t, &test_token);
         assert_eq!(t.line, 1);
     }
 }
