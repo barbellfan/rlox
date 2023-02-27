@@ -56,16 +56,46 @@ fn is_at_end(scanner: &Scanner) -> bool {
 fn scan_token(scanner: &mut Scanner) {
     let c = advance(scanner);
     match c {
-        '(' => add_token(scanner, TokenType::LEFT_PAREN, c.to_string()),
-        ')' => add_token(scanner, TokenType::RIGHT_PAREN, c.to_string()),
-        '{' => add_token(scanner, TokenType::LEFT_BRACE, c.to_string()),
-        '}' => add_token(scanner, TokenType::RIGHT_BRACE, c.to_string()),
-        ',' => add_token(scanner, TokenType::COMMA, c.to_string()),
-        '.' => add_token(scanner, TokenType::DOT, c.to_string()),
-        '-' => add_token(scanner, TokenType::MINUS, c.to_string()),
-        '+' => add_token(scanner, TokenType::PLUS, c.to_string()),
-        ';' => add_token(scanner, TokenType::SEMICOLON, c.to_string()),
-        '*' => add_token(scanner, TokenType::STAR, c.to_string()),
+        '(' => {
+            add_token(scanner, TokenType::LEFT_PAREN, c.to_string());
+            scanner.start += 1;
+        },
+        ')' => {
+            add_token(scanner, TokenType::RIGHT_PAREN, c.to_string());
+            scanner.start += 1;
+        },
+        '{' => {
+            add_token(scanner, TokenType::LEFT_BRACE, c.to_string());
+            scanner.start += 1;
+        },
+        '}' => {
+            add_token(scanner, TokenType::RIGHT_BRACE, c.to_string());
+            scanner.start += 1;
+        },
+        ',' => {
+            add_token(scanner, TokenType::COMMA, c.to_string());
+            scanner.start += 1;
+        },
+        '.' => {
+            add_token(scanner, TokenType::DOT, c.to_string());
+            scanner.start += 1;
+        },
+        '-' => {
+            add_token(scanner, TokenType::MINUS, c.to_string());
+            scanner.start += 1;
+        },
+        '+' => {
+            add_token(scanner, TokenType::PLUS, c.to_string());
+            scanner.start += 1;
+        },
+        ';' => {
+            add_token(scanner, TokenType::SEMICOLON, c.to_string());
+            scanner.start += 1;
+        },
+        '*' => {
+            add_token(scanner, TokenType::STAR, c.to_string());
+            scanner.start += 1;
+        },
         '!' if is_token_match(scanner, '=') => add_token(scanner, TokenType::BANG_EQUAL, "!=".to_string()),
         '!' => add_token(scanner, TokenType::BANG, c.to_string()),
         '=' if is_token_match(scanner, '=') => add_token(scanner, TokenType::EQUAL_EQUAL, "==".to_string()),
@@ -125,8 +155,7 @@ mod tests {
 
     #[test]
     fn scan_token_left_paren() {
-        let mut bytes = Vec::new();
-        bytes.push('(' as u8);
+        let bytes: Vec<u8> = vec!['(' as u8];
         let scanner = &mut Scanner::new(bytes);
         scan_token(scanner);
         assert!(scanner.tokens.len() == 1);
@@ -139,5 +168,45 @@ mod tests {
         let t = &scanner.tokens[0];
         assert_eq!(t, &test_token);
         assert_eq!(t.line, 1);
+    }
+
+    #[test]
+    fn scan_one_char_tokens() {
+        let bytes: Vec<u8> = vec![
+            '(' as u8,
+            ')' as u8,
+            '{' as u8,
+            '}' as u8,
+            ',' as u8,
+            '.' as u8,
+            '-' as u8,
+            '+' as u8,
+            ';' as u8,
+            '*' as u8,
+            ];
+        let tokens: Vec<Token> = vec![
+            Token::new(TokenType::LEFT_PAREN, "(".to_owned(), "(".to_owned(), 1),
+            Token::new(TokenType::RIGHT_PAREN, ")".to_owned(), ")".to_owned(), 1),
+            Token::new(TokenType::LEFT_BRACE, "{".to_owned(), "{".to_owned(), 1),
+            Token::new(TokenType::RIGHT_BRACE, "}".to_owned(), "}".to_owned(), 1),
+            Token::new(TokenType::COMMA, ",".to_owned(), ",".to_owned(), 1),
+            Token::new(TokenType::DOT, ".".to_owned(), ".".to_owned(), 1),
+            Token::new(TokenType::MINUS, "-".to_owned(), "-".to_owned(), 1),
+            Token::new(TokenType::PLUS, "+".to_owned(), "+".to_owned(), 1),
+            Token::new(TokenType::SEMICOLON, ";".to_owned(), ";".to_owned(), 1),
+            Token::new(TokenType::STAR, "*".to_owned(), "*".to_owned(), 1),
+        ];
+
+        let scanner = &mut Scanner::new(bytes.clone());
+        while !is_at_end(scanner) {
+            scan_token(scanner);
+        }
+        assert!(scanner.tokens.len() == 10);
+
+        tokens.into_iter().enumerate().for_each(|(i, expected_token)| {
+            let scanned_token = &scanner.tokens[i];
+            assert_eq!(scanned_token, &expected_token);
+
+        });
     }
 }
