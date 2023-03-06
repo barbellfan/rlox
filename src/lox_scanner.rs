@@ -96,14 +96,38 @@ fn scan_token(scanner: &mut Scanner) {
             add_token(scanner, TokenType::STAR, c.to_string());
             scanner.start += 1;
         },
-        '!' if is_token_match(scanner, '=') => add_token(scanner, TokenType::BANG_EQUAL, "!=".to_string()),
-        '!' => add_token(scanner, TokenType::BANG, c.to_string()),
-        '=' if is_token_match(scanner, '=') => add_token(scanner, TokenType::EQUAL_EQUAL, "==".to_string()),
-        '=' => add_token(scanner, TokenType::EQUAL, "=".to_string()),
-        '<' if is_token_match(scanner, '=') => add_token(scanner, TokenType::LESS_EQUAL, "<=".to_string()),
-        '<' => add_token(scanner, TokenType::LESS, "<".to_string()),
-        '>' if is_token_match(scanner, '=') => add_token(scanner, TokenType::LESS_EQUAL, ">=".to_string()),
-        '>' => add_token(scanner, TokenType::LESS, ">".to_string()),
+        '!' if is_token_match(scanner, '=') => {
+            add_token(scanner, TokenType::BANG_EQUAL, "!=".to_string());
+            scanner.start += 2;
+        },
+        '!' => {
+            add_token(scanner, TokenType::BANG, c.to_string());
+            scanner.start += 1;
+        },
+        '=' if is_token_match(scanner, '=') => {
+            add_token(scanner, TokenType::EQUAL_EQUAL, "==".to_string());
+            scanner.start += 2;
+        },
+        '=' => {
+            add_token(scanner, TokenType::EQUAL, "=".to_string());
+            scanner.start += 1;
+        },
+        '<' if is_token_match(scanner, '=') => {
+            add_token(scanner, TokenType::LESS_EQUAL, "<=".to_string());
+            scanner.start += 2;
+        },
+        '<' => {
+            add_token(scanner, TokenType::LESS, "<".to_string());
+            scanner.start += 1;
+        },
+        '>' if is_token_match(scanner, '=') => {
+            add_token(scanner, TokenType::GREATER_EQUAL, ">=".to_string());
+            scanner.start += 2;
+        },
+        '>' => {
+            add_token(scanner, TokenType::GREATER, ">".to_string());
+            scanner.start += 1;
+        },
         other => add_token(scanner, TokenType::STRING, other.to_string()),
         /* add later when all the other things get added to the match
         other => {
@@ -136,7 +160,7 @@ fn is_token_match(scanner: &mut Scanner, expected: char) -> bool {
 }
 
 fn peek(scanner: &Scanner) -> char {
-    scanner.source[scanner.current + 1] as char
+    scanner.source[scanner.current] as char
 }
 
 fn add_token(scanner: &mut Scanner, token_type: TokenType, token: String) {
@@ -207,6 +231,43 @@ mod tests {
             let scanned_token = &scanner.tokens[i];
             assert_eq!(scanned_token, &expected_token);
 
+        });
+    }
+
+    #[test]
+    fn scan_token_not_eq() {
+        let bytes: Vec<u8> = vec!['!' as u8, '=' as u8];
+        let scanner = &mut Scanner::new(bytes);
+        scan_token(scanner);
+        assert!(scanner.tokens.len() == 1);
+    }
+
+    #[test]
+    fn scan_two_char_tokens() {
+        let bytes: Vec<u8> = vec![
+            '!' as u8,
+            '=' as u8,
+            '=' as u8,
+            '=' as u8,
+            '<' as u8,
+            '=' as u8,
+            '>' as u8,
+            '=' as u8
+            ];
+        let tokens: Vec<Token> = vec![
+            Token::new(TokenType::BANG_EQUAL, "!=".to_owned(), "!=".to_owned(), 1),
+            Token::new(TokenType::EQUAL_EQUAL, "==".to_owned(), "==".to_owned(), 1),
+            Token::new(TokenType::LESS_EQUAL, "<=".to_owned(), "<=".to_owned(), 1),
+            Token::new(TokenType::GREATER_EQUAL, ">=".to_owned(), ">=".to_owned(), 1),
+        ];
+        let scanner = &mut Scanner::new(bytes.clone());
+        while !is_at_end(scanner) {
+            scan_token(scanner);
+        }
+        assert!(scanner.tokens.len() == 4);
+        tokens.into_iter().enumerate().for_each(|(i, expected_token)| {
+            let scanned_token = &scanner.tokens[i];
+            assert_eq!(scanned_token, &expected_token);
         });
     }
 }
