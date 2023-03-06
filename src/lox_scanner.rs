@@ -9,7 +9,7 @@ pub struct Scanner {
     start: usize, // Location in array. Use usize to match array index data type.
     current: usize, // ditto
     line: u32, // Line number. Use u32 since there can be lots of lines in a file.
-    had_error: bool
+    _had_error: bool
 }
 
 #[derive(Debug, Clone)]
@@ -33,7 +33,7 @@ impl Scanner {
             start: 0,
             current: 0,
             line: 1,
-            had_error: false
+            _had_error: false
         }
     }
 }
@@ -250,4 +250,60 @@ mod tests {
             assert_eq!(scanned_token, &expected_token);
         });
     }
+
+    #[test]
+    fn scan_token_mix_01() {
+        let bytes: Vec<u8> = "!==".try_into().unwrap();
+        let tokens: Vec<Token> = vec![
+            Token::new(TokenType::BANG_EQUAL, "!=".to_owned(), "!=".to_owned(), 1),
+            Token::new(TokenType::EQUAL, "=".to_owned(), "=".to_owned(), 1),
+        ];
+        let scanner = &mut Scanner::new(bytes.clone());
+        while !is_at_end(scanner) {
+            scan_token(scanner);
+        }
+        assert!(scanner.tokens.len() == 2);
+        tokens.into_iter().enumerate().for_each(|(i, expected_token)| {
+            let scanned_token = &scanner.tokens[i];
+            assert_eq!(scanned_token, &expected_token);
+        })
+    }
+
+    #[test]
+    fn scan_token_mix_02() {
+        let bytes: Vec<u8> = "=!=".try_into().unwrap();
+        let tokens: Vec<Token> = vec![
+            Token::new(TokenType::EQUAL, "=".to_owned(), "=".to_owned(), 1),
+            Token::new(TokenType::BANG_EQUAL, "!=".to_owned(), "!=".to_owned(), 1),
+        ];
+        let scanner = &mut Scanner::new(bytes.clone());
+        while !is_at_end(scanner) {
+            scan_token(scanner);
+        }
+        assert!(scanner.tokens.len() == 2);
+        tokens.into_iter().enumerate().for_each(|(i, expected_token)| {
+            let scanned_token = &scanner.tokens[i];
+            assert_eq!(scanned_token, &expected_token);
+        })
+    }
+
+    /*
+    #[test]
+    fn scan_token_mix_01() {
+        let bytes: Vec<u8> = "".try_into().unwrap();
+        let tokens: Vec<Token> = vec![
+            Token::new(TokenType::, "".to_owned(), "".to_owned(), 1),
+        ];
+        let scanner = &mut Scanner::new(bytes.clone());
+        while !is_at_end(scanner) {
+            scan_token(scanner);
+        }
+        assert!(scanner.tokens.len() == );
+        tokens.into_iter().enumerate().for_each(|(i, expected_token)| {
+            let scanned_token = &scanner.tokens[i];
+            assert_eq!(scanned_token, &expected_token);
+        })
+    }
+    
+     */
 }
