@@ -179,7 +179,7 @@ mod tests {
 
     #[test]
     fn scan_token_left_paren() {
-        let bytes: Vec<u8> = vec!['(' as u8];
+        let bytes: Vec<u8> = "(".try_into().unwrap();
         let scanner = &mut Scanner::new(bytes);
         scan_token(scanner);
         assert!(scanner.tokens.len() == 1);
@@ -196,18 +196,7 @@ mod tests {
 
     #[test]
     fn scan_one_char_tokens() {
-        let bytes: Vec<u8> = vec![
-            '(' as u8,
-            ')' as u8,
-            '{' as u8,
-            '}' as u8,
-            ',' as u8,
-            '.' as u8,
-            '-' as u8,
-            '+' as u8,
-            ';' as u8,
-            '*' as u8,
-            ];
+        let bytes: Vec<u8> = "(){},.-+;*".try_into().unwrap();
         let tokens: Vec<Token> = vec![
             Token::new(TokenType::LEFT_PAREN, "(".to_owned(), "(".to_owned(), 1),
             Token::new(TokenType::RIGHT_PAREN, ")".to_owned(), ")".to_owned(), 1),
@@ -236,7 +225,7 @@ mod tests {
 
     #[test]
     fn scan_token_not_eq() {
-        let bytes: Vec<u8> = vec!['!' as u8, '=' as u8];
+        let bytes: Vec<u8> = "!=".try_into().unwrap();
         let scanner = &mut Scanner::new(bytes);
         scan_token(scanner);
         assert!(scanner.tokens.len() == 1);
@@ -244,16 +233,7 @@ mod tests {
 
     #[test]
     fn scan_two_char_tokens() {
-        let bytes: Vec<u8> = vec![
-            '!' as u8,
-            '=' as u8,
-            '=' as u8,
-            '=' as u8,
-            '<' as u8,
-            '=' as u8,
-            '>' as u8,
-            '=' as u8
-            ];
+        let bytes: Vec<u8> = "!===<=>=".try_into().unwrap();
         let tokens: Vec<Token> = vec![
             Token::new(TokenType::BANG_EQUAL, "!=".to_owned(), "!=".to_owned(), 1),
             Token::new(TokenType::EQUAL_EQUAL, "==".to_owned(), "==".to_owned(), 1),
